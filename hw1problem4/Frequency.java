@@ -59,7 +59,9 @@ public class Frequency implements Callable<Integer> {
             }
         } catch (Exception e) {
             System.err.println(e);
-        }
+        } finally {
+	    threadPool.shutdown();
+	}
         return result;
     }
 
