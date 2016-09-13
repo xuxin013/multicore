@@ -1,3 +1,4 @@
+package synchronizedIncrement;
 
 public class IntWrapper {
     private int integer;
@@ -13,5 +14,4 @@ public class IntWrapper {
     public void setInteger(int integer) {
         this.integer = integer;
     }
-
-};
+}

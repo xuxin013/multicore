@@ -1,3 +1,5 @@
+package atomicInteger;
+
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class AtomicIntegerPIncrement implements Runnable {
@@ -31,7 +33,7 @@ public class AtomicIntegerPIncrement implements Runnable {
         try {
             for (int i = 0; i < numThreads; i++) {
                 new AtomicIntegerPIncrement(atomicC, numThreads).run();
-            }
+            } 
         } catch (Exception e) {
             System.err.println(e);
         }

@@ -1,5 +1,9 @@
+package reentrantLock;
+
 import java.util.ArrayList;
 import java.util.concurrent.locks.ReentrantLock;
+
+import synchronizedIncrement.IntWrapper;
 
 public class ReentrantLockPIncrement implements Runnable {
     private int max = 1200000;
