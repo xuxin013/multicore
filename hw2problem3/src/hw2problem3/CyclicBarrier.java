@@ -3,8 +3,10 @@ package hw2problem3;
 import java.util.concurrent.Semaphore;
 
 public class CyclicBarrier {
-    private Semaphore semaphore;
+    private Semaphore mutex;
+    private Semaphore barrier;
     private int counter;
+    private int parties;
 
     /**
      * Creates a new CyclicBarrier that will trip when
@@ -15,8 +17,9 @@ public class CyclicBarrier {
      * @throws InterruptedException if the current thread is interrupted
      */
     public CyclicBarrier(int parties) throws InterruptedException {
-        semaphore = new Semaphore(1);
-        semaphore.acquire(1);
+        barrier = new Semaphore(0);
+        mutex = new Semaphore(1);
+        this.parties = parties;
         counter = parties - 1;
     }
 
@@ -30,16 +33,16 @@ public class CyclicBarrier {
      * (parties - 1) indicates the first to arrive and zero indicates
      * the last to arrive.
      */
-    public synchronized int await() throws InterruptedException {
+    public int await() throws InterruptedException {
         int threadIndex = 0;
-        System.out.println("thread waiting at barrier");
+        mutex.acquire();
+        threadIndex = counter;
+        counter--;
+        mutex.release();
         if (counter == 0) {
-            semaphore.release(1);
-            notifyAll();
+            barrier.release(parties);
         } else {
-            threadIndex = counter;
-            counter--;
-            wait();
+            barrier.acquire();
         }
         return threadIndex;
     }

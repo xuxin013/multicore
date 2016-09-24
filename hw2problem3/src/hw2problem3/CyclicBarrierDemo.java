@@ -12,6 +12,7 @@ public class CyclicBarrierDemo {
 
         public void run() {
             try {
+                System.out.println("thread " + threadNumber + " is waiting at barrier");
                 System.out.println("thread " + threadNumber + " passed barrier with arrival index of " + barrier.await());
             } catch (InterruptedException e) {
                 e.printStackTrace();
