@@ -3,8 +3,9 @@
 #include <omp.h>
 #include <math.h>
 #include<iostream>
+#include<ctime>
 
-#define numthreads 4
+
 using namespace std;
 double MonteCarloPi(int s) {
 	double x, y;
@@ -12,22 +13,25 @@ double MonteCarloPi(int s) {
 	double z;
 	double pi;
 	int i;
-	//omp_set_num_threads(numthreads);
-#pragma omp parallel firstprivate(x, y, z, i) shared(count) num_threads(numthreads)
+	int max_thread = omp_get_max_threads();
+	omp_set_num_threads(max_thread);
+	srand((int)time(NULL) ^ omp_get_thread_num());
+	//#pragma omp parallel firstprivate(x, y, z, i) shared(count) num_threads(numthreads)
+#pragma omp parallel for private(x, y, z) shared(count) num_threads(max_thread)
+	for (i = 0; i<s; ++i)              //main loop
 	{
-		for (i = 0; i<s; ++i)              //main loop
+		cout << omp_get_thread_num() << endl;
+		x = (double)rand() / RAND_MAX;      //gets a random x coordinate
+		y = (double)rand() / RAND_MAX;      //gets a random y coordinate
+		z = sqrt((x*x) + (y*y));          //Checks to see if number is inside unit circle
+		if (z <= 1)
 		{
-			x = (double)rand() / RAND_MAX;      //gets a random x coordinate
-			y = (double)rand() / RAND_MAX;      //gets a random y coordinate
-			z = sqrt((x*x) + (y*y));          //Checks to see if number is inside unit circle
-			if (z <= 1)
-			{
-				++count;            //if it is, consider it a valid random point
-			}
+			++count;            //if it is, consider it a valid random point
 		}
-		//print the value of each thread/rank
 	}
-	pi = ((double)count / (double)(s*numthreads))*4.0;
+	//print the value of each thread/rank
+
+	pi = ((double)count / (double)(s))*4.0;
 
 	return pi;
 }
