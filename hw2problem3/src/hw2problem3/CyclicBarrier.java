@@ -40,6 +40,8 @@ public class CyclicBarrier {
         counter--;
         mutex.release();
         if (counter == 0) {
+            threadIndex = 0;
+            counter = parties - 1;
             barrier.release(parties);
         } else {
             barrier.acquire();
