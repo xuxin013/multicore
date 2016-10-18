@@ -39,7 +39,7 @@ public class Hw3problem4Demo {
 
     }
 
-    public static void main(String[] args) {
+    public static void main1(String[] args) {
         ArrayList<Integer> array = new ArrayList<>();
         Random random = new Random();
         for (int i = 0; i < 10; i++) {
@@ -59,7 +59,7 @@ public class Hw3problem4Demo {
         Integer contains = demo.array.get(1);
         long time = System.currentTimeMillis();
         demo.setCoarseGrainedListSet(new CoarseGrainedListSet());
-        for(Integer x : demo.array) {
+        for (Integer x : demo.array) {
             System.out.print(demo.coarseGrainedListSet.add(x));
             System.out.print(", ");
         }
@@ -76,7 +76,7 @@ public class Hw3problem4Demo {
         Integer contains = demo.array.get(1);
         long time = System.currentTimeMillis();
         demo.setFineGrainedListSet(new FineGrainedListSet());
-        for(Integer x : demo.array) {
+        for (Integer x : demo.array) {
             System.out.print(demo.fineGrainedListSet.add(x));
             System.out.print(", ");
         }
@@ -93,7 +93,7 @@ public class Hw3problem4Demo {
         Integer contains = demo.array.get(1);
         long time = System.currentTimeMillis();
         demo.setLockFreeListSet(new LockFreeListSet());
-        for(Integer x : demo.array) {
+        for (Integer x : demo.array) {
             System.out.print(demo.lockFreeListSet.add(x));
             System.out.print(", ");
         }

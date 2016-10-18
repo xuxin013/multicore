@@ -6,84 +6,92 @@ public class FineGrainedListSet implements ListSet {
     private Node head;
 
     public FineGrainedListSet() {
-        this.head = new Node(0);
+        this.head = new Node(Integer.MIN_VALUE);
+        head.next = new Node(Integer.MAX_VALUE);
     }
 
     public boolean add(int value) {
-        Node current = head;
-        current.lock.lock();
+        Node pred, curr;
+        head.lock.lock();
+        pred = head;
         try {
-            while (current.next != null) {
-                current.next.lock.lock();
-                if (value < current.next.value) {
-                    break;
-                } else if (value == current.next.value) {
+            curr = pred.next;
+            curr.lock.lock();
+            try {
+                while (curr.value < value) {
+                    pred.lock.unlock();
+                    pred = curr;
+                    curr = curr.next;
+                    curr.lock.lock();
+                }
+                if (curr.value == value) {
                     return false;
                 }
-                Node temp = current.next;
-                current.lock.unlock();
-                current = temp;
-            }
-            current.next = new Node(current.next, value);
-            if (current.next.next != null) {
-                current.next.next.lock.unlock();
+                Node node = new Node(value);
+                node.isRemoved = false;
+                node.next = curr;
+                pred.next = node;
+                return true;
+            } finally {
+                curr.lock.unlock();
             }
         } finally {
-            current.lock.unlock();
+            pred.lock.unlock();
         }
-        return true;
     }
 
     public boolean remove(int value) {
-        Node pred;
-        Node current;
+        Node pred, curr;
+        head.lock.lock();
         pred = head;
-        pred.lock.lock();
-        current = pred.next;
-        current.lock.lock();
-        while (current.value <= value) {
-            if (current.value == value) {
-                pred.next = current.next;
-                return true;
+        try {
+            curr = pred.next;
+            curr.lock.lock();
+            try {
+                while (curr.value < value) {
+                    pred.lock.unlock();
+                    pred = curr;
+                    curr = curr.next;
+                    curr.lock.lock();
+                }
+                if (curr.value == value) {
+                    curr.isRemoved = true;
+                    pred.next = curr.next;
+                    return true;
+                }
+                return false;
+            } finally {
+                curr.lock.unlock();
             }
+        } finally {
             pred.lock.unlock();
-            pred = current;
-            current = current.next;
-            current.lock.lock();
         }
-        return false;
     }
 
     public boolean contains(int value) {
-        Node current = head;
-        current.lock.lock();
-        while (current.next != null) {
-            current.next.lock.lock();
-            if (current.value == value) {
-                current.lock.unlock();
-                current.next.lock.unlock();
-                return true;
+        Node curr;
+        head.lock.lock();
+        curr = head;
+        try {
+            while (curr.value < value) {
+                curr.lock.unlock();
+                curr = curr.next;
+                curr.lock.lock();
             }
-            Node temp = current.next;
-            current.lock.unlock();
-            current = temp;
+            return curr.value == value && !curr.isRemoved;
+        } finally {
+            curr.lock.unlock();
         }
-        return false;
     }
 
     private class Node {
         private Integer value;
-        private  Node next;
+        private Node next = null;
+        private boolean isRemoved = false;
         private ReentrantLock lock = new ReentrantLock();
 
         private Node(Integer x) {
             value = x;
-            next = null;
-        }
-
-        private Node(Node next, Integer x) {
-            this.value = x;
-            this.next = next;
         }
     }
 }
