@@ -1,10 +1,10 @@
-package stack;
+package q5.stack;
 
 public class LockStack implements MyStack {
-	Node top;
+	Node top = null;
 	
   public LockStack() {
-	  top = new Node(null);
+	  top = null;
   }
   
   public synchronized boolean push(Integer value) {

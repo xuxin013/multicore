@@ -1,4 +1,4 @@
-package queue;
+package q5.queue;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -51,7 +51,8 @@ public class LockFreeQueue implements MyQueue {
     	Node next = tmpHead.next.get();
     	if(tmpHead == head.getReference()){
     		if(tmpHead == tmpTail){
-    			while(next == null){ Thread.yield();}
+    			while(next == null){ Thread.yield();
+    			}
     		tail.compareAndSet(tmpTail, next, tailCount, tailCount+1);
     		}
     		else{

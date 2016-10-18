@@ -1,4 +1,4 @@
-package stack;
+package q5.stack;
 
 import java.util.concurrent.atomic.AtomicReference;
 

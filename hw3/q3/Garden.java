@@ -4,25 +4,26 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Garden {
-	final int Max = 5;   // how to set Max???
-	int Newtoncount=0;
-	int Bencount=0;
-	int Marycount=0;
+	int Max ;  
+	long Newtoncount=0;
+	long Bencount=0;
+	long Marycount=0;
 	boolean shovel = true;
 	final ReentrantLock lock = new ReentrantLock();
 	final Condition newton = lock.newCondition();
 	final Condition benjamin = lock.newCondition();
 	final Condition mary = lock.newCondition();
-	public Garden(){
+	public Garden(int i){
 		Newtoncount=0;
 		Bencount=0;
 		Marycount=0;
 		shovel = true;
+		Max = i;
 	}
 	public void startDigging()throws InterruptedException{
 		lock.lock();
 		try{
-			while(shovel==false||Newtoncount-Marycount>=5)
+			while(shovel==false||Newtoncount-Marycount>=Max)
 				newton.await();
 			shovel=false;
 		} finally{
@@ -34,8 +35,7 @@ public class Garden {
 		Newtoncount++;
 		shovel = true;
 		benjamin.signal();
-		mary.signal();
-	//	newton.signal();
+		mary.signal(); 
 		lock.unlock();
 	}
 
@@ -51,7 +51,6 @@ public class Garden {
 		lock.lock();
 		Bencount++;
 		mary.signal();
-//		benjamin.signal();
 		lock.unlock();
 	}
 
@@ -70,7 +69,6 @@ public class Garden {
 		Marycount++;
 		shovel = true;
 		newton.signal();
-//		mary.signal();
 		lock.unlock();
 	}
 	
@@ -145,7 +143,5 @@ public class Garden {
 		private void Fill(){
 		}
 	}
-	
-	
 }
 

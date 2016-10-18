@@ -1,18 +1,21 @@
-package queue;
+package q5.queue;
 
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class LockQueue implements MyQueue {
 	ReentrantLock enqLock, deqLock;
 	Node head;
 	Node tail;
+	Condition notEmpty;
 	AtomicInteger count;
   public LockQueue() {
 	  head =new Node(null);
 	  tail = head;
 	  enqLock = new ReentrantLock();
 	  deqLock = new ReentrantLock();
+	  notEmpty = deqLock.newCondition();
 	  count = new AtomicInteger(0);
   }
   
@@ -24,7 +27,10 @@ public class LockQueue implements MyQueue {
 		tail.next = e;
 		tail = e;
 		count.getAndIncrement();
+		deqLock.lock();
+        notEmpty.signal();
 	}finally{
+		deqLock.unlock();
 		enqLock.unlock();
 	}
 	  
