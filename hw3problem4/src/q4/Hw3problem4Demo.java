@@ -98,8 +98,8 @@ public class Hw3problem4Demo {
             System.out.print(", ");
         }
         System.out.print("\n");
+        System.out.println(demo.lockFreeListSet.contains(contains));
         System.out.println(demo.lockFreeListSet.remove(toRemove));
-        System.out.println(demo.lockFreeListSet.contains(toRemove));
         System.out.println(demo.lockFreeListSet.contains(contains));
         time = System.currentTimeMillis() - time;
         System.out.println("lockFreeDemo runs in " + time + " ms");

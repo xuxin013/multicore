@@ -7,12 +7,13 @@ public class LockFreeListSet implements ListSet {
 
     public LockFreeListSet() {
         this.head = new AtomicMarkableReference<>(new Node(0), false);
+        this.head.getReference().next = new AtomicMarkableReference<>(null, false);
     }
 
     public boolean add(int value) {
         while(true) {
             Node[] nodes = find(value);
-            if (nodes[1] == null) {
+            if (nodes[1] != null) {
                 return false;
             }
             Node node = new Node(value);
@@ -53,7 +54,12 @@ public class LockFreeListSet implements ListSet {
                         return nodes;
                     } else if (nodes[1].value < x) {
                         nodes[0] = nodes[1];
+                        nodes[1] = nodes[2];
+                        if(nodes[1] == null) {
+                            return nodes;
+                        }
                     } else {
+                        nodes[2] = nodes[1];
                         nodes[1] = null;
                         return nodes;
                     }
